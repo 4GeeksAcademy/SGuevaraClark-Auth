@@ -57,12 +57,30 @@ class Authors(db.Model):
         }
     
 
+class Books_Categories(db.Model):
+    __tablename__ = 'books_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Books_Categories {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            # do not serialize the password, its a security breach
+            "book_id": self.book_id,
+            "category": self.category_id
+        }
+
+
 class Books(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable= False)
-    book_category = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable= False)
+    book_categories = db.relationship('Books_Categories', backref='category', lazy=True)
 
     def __repr__(self):
         return f'<Books {self.title}>'
@@ -75,12 +93,11 @@ class Books(db.Model):
         }
     
 
-
 class Categories(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(250), nullable=False)
-    book_category = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable= False)
+    book_categories = db.relationship('Books_Categories', backref='books', lazy=True)
 
     def __repr__(self):
         return f'<Books {self.title}>'

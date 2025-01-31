@@ -40,7 +40,6 @@ def register():
         return jsonify({'error': str(error)})
     
 
-
 @api.route('/private', methods=['GET'])
 @jwt_required()
 def handle_private():
